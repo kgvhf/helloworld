@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
@@ -34,5 +37,19 @@ func TestCountSubStr(t *testing.T) {
 		if cnt != c.cntFindWord {
 			t.Errorf("task.findMatch(%q, %q) == %d, cntFindWord %d", c.str, c.searchWord, cnt, c.cntFindWord)
 		}
+	}
+}
+
+func TestSuccessUrl(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "Go Go Go")
+	}))
+	defer server.Close()
+
+	task := NewTask(server.URL, "Go")
+	task.run()
+
+	if task.countMatch != 3 {
+		t.Errorf("Count incorrect: %d != 3", task.countMatch)
 	}
 }

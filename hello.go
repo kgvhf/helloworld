@@ -12,6 +12,7 @@ import (
 	"time"
 )
 
+//@todo вынести таски и файндеры в отдельные файлы
 type Task struct {
 	url        string
 	searchWord string
@@ -36,7 +37,11 @@ func (t *Task) run() {
 	if err != nil {
 		log.Println(err.Error())
 	}
-	t.countMatch = bytes.Count(body, []byte(t.searchWord))
+	t.countMatch = t.findMatch(body)
+}
+
+func (t Task) findMatch(body []byte) int {
+	return bytes.Count(body, []byte(t.searchWord))
 }
 
 func (t Task) view() {
